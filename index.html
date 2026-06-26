@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHY Studio — Presentation</title>
+<style>
+  /* Add this at the very top of your <style> tag */
+@font-face {
+  font-family: 'Co Text';
+  src: local('Co Text Regular'), local('CoText-Regular'), local('Co Text');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Co Text';
+  src: local('Co Text Bold'), local('CoText-Bold'), local('Co Text');
+  font-weight: 700;
+  font-style: normal;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Inter',sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+
+canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+#deck{position:fixed;inset:0;z-index:2}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:72px 80px 100px;opacity:0;pointer-events:none;overflow:hidden;visibility:hidden;will-change:transform,opacity,filter}
+.slide.active{opacity:1;pointer-events:all;visibility:visible}
+
+.slide::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.35}
+
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.7));z-index:300;width:0%;transform-origin:left;pointer-events:none}
+
+#slabel{position:fixed;top:28px;left:40px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.22);z-index:200;font-family:'Space Grotesk',sans-serif}
+#keyhint{position:fixed;top:28px;right:40px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.15);z-index:200;font-family:'Space Grotesk',sans-serif;display:flex;align-items:center;gap:10px}
+#keyhint kbd{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 5px;border:1px solid rgba(255,255,255,.12);border-radius:4px;font-size:10px;color:rgba(255,255,255,.3);background:rgba(255,255,255,.03)}
+
+#dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:200;max-height:70vh;overflow-y:auto;padding:4px 0}
+.dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .45s cubic-bezier(.22,1,.36,1);flex-shrink:0}
+.dot.active{background:#fff;height:16px;border-radius:3px}
+.dot:hover{background:rgba(255,255,255,.5)}
+
+#nav{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:200;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:10px 20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+#nav button{background:none;border:none;cursor:pointer;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .25s,transform .25s}
+#nav button:hover{background:rgba(255,255,255,.1)}
+#nav button:active{transform:scale(.9)}
+#nav button:disabled{opacity:.2;cursor:default;transform:none}
+#slide-counter{font-size:11px;color:rgba(255,255,255,.35);font-family:'Space Grotesk',sans-serif;min-width:52px;text-align:center;letter-spacing:.06em}
+
+#curtain{position:fixed;inset:0;z-index:150;pointer-events:none;background:#000;transform:scaleY(0);transform-origin:top}
+#curtain-line{position:fixed;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);z-index:151;pointer-events:none;opacity:0;transform:scaleX(0)}
+
+.inner{position:relative;z-index:5;width:100%;max-width:1180px}
+.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:12px;font-family:'Space Grotesk',sans-serif}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,4.2vw,52px);font-weight:700;letter-spacing:-.03em;line-height:1.08}
+.sec-sub{font-size:15px;color:rgba(255,255,255,.4);line-height:1.75;margin-top:14px;max-width:640px}
+.divider{width:48px;height:2px;background:rgba(255,255,255,.18);margin-bottom:24px;transform-origin:left}
+.anim-item{will-change:transform,opacity}
+
+/* S1 Hero */
+#s1{background:#000}
+.hero-wrap{text-align:center;position:relative}
+.hero-badge{display:inline-block;margin-bottom:18px;padding:8px 18px;border:1px solid rgba(255,255,255,.08);border-radius:100px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);background:rgba(255,255,255,.03)}
+.hero-eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px;font-family:'Space Grotesk',sans-serif}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(96px,17vw,196px);font-weight:700;line-height:.85;letter-spacing:-.05em}
+.hero-logo-img{
+  width:min(720px,72vw);
+  height:auto;
+  display:block;
+}
+.hero-title .letter{display:inline-block}
+.hero-title .q{color:rgba(255,255,255,.12);position:relative}
+.hero-title .q-ring{position:absolute;top:50%;left:50%;width:115%;height:115%;border:1px solid rgba(255,255,255,.07);border-radius:50%;transform:translate(-50%,-50%);animation:spin 14s linear infinite}
+.hero-title .q-ring:nth-child(2){width:135%;height:135%;animation-direction:reverse;animation-duration:20s;border-color:rgba(255,255,255,.04)}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.hero-line{width:180px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);margin:22px auto}
+.hero-sub{font-size:clamp(14px,2vw,17px);color:rgba(255,255,255,.42);font-weight:300;letter-spacing:.04em;max-width:520px;margin:0 auto}
+.scroll-hint{margin-top:48px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-hint span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.scroll-line{width:1px;height:36px;background:linear-gradient(180deg,rgba(255,255,255,.35),transparent);animation:scrollPulse 2.2s ease-in-out infinite}
+@keyframes scrollPulse{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* S2 About */
+#s2{background:#030303}
+.about-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:72px;align-items:center}
+.about-quote{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,34px);font-weight:600;line-height:1.35;letter-spacing:-.02em;margin-bottom:28px}
+.about-quote em{font-style:normal;color:rgba(255,255,255,.45)}
+.about-text p{font-size:15px;line-height:1.85;color:rgba(255,255,255,.5);margin-bottom:18px}
+.about-text p em{color:rgba(255,255,255,.92);font-style:normal;font-weight:600}
+
+/* S3 Journey */
+#s3{background:#040404}
+.journey-track{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative}
+.journey-line{position:absolute;top:36px;left:12.5%;width:75%;height:1px;background:rgba(255,255,255,.06);overflow:hidden}
+.journey-line-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.35),rgba(255,255,255,.05))}
+.j-node{text-align:center;padding:0 16px}
+.j-dot{width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;transition:transform .4s,border-color .4s}
+.j-node:hover .j-dot{transform:scale(1.06);border-color:rgba(255,255,255,.35)}
+.j-node h3{font-size:13px;font-weight:700;margin-bottom:8px;letter-spacing:.02em}
+.j-node p{font-size:12px;color:rgba(255,255,255,.38);line-height:1.65}
+
+/* S4 Services */
+#s4{background:#050505}
+.srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.05);border-radius:14px;overflow:hidden;margin-top:36px}
+.srv{background:#080808;padding:24px 20px;position:relative;overflow:hidden;transition:background .35s,transform .35s cubic-bezier(.22,1,.36,1)}
+.srv::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.07) 0%,transparent 65%);opacity:0;transition:opacity .3s}
+.srv:hover::after{opacity:1}
+.srv:hover{background:#111;transform:translateY(-2px)}
+.srv-ico{font-size:18px;margin-bottom:10px;opacity:.45}
+.srv h3{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.srv p{font-size:11px;color:rgba(255,255,255,.38);line-height:1.6}
+.srv-num{position:absolute;top:14px;right:14px;font-size:9px;color:rgba(255,255,255,.1);font-family:'Space Grotesk',sans-serif;font-weight:700}
+
+/* S5 Proof */
+#s5{background:#000}
+.proof-wrap{text-align:center}
+.counter-block{margin:36px 0 24px}
+.counter-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(100px,18vw,180px);font-weight:700;line-height:.9;letter-spacing:-.05em;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.counter-label{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:12px;font-family:'Space Grotesk',sans-serif}
+.proof-tagline{font-size:clamp(18px,2.5vw,26px);font-weight:300;color:rgba(255,255,255,.55);max-width:680px;margin:0 auto;line-height:1.5}
+
+/* S6 Work */
+#s6{background:#030303}
+.work-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:32px}
+.wcard{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.06);transition:transform .45s cubic-bezier(.22,1,.36,1),border-color .35s}
+.wcard:hover{
+  transform:
+    translateY(-18px)
+    scale(1.08);
+
+  border-color:rgba(255,255,255,.28);
+
+  box-shadow:
+    0 30px 70px rgba(0,0,0,.8),
+    0 0 40px rgba(255,255,255,.08);
+
+  z-index:30;
+}
+.wcard-vis{
+  height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:#ffffff; /* white background */
+
+  padding:18px;
+  position:relative;
+  overflow:hidden;
+}
+
+.wcard-vis .slide-img{
+  width:85%;
+  height:85%;
+  object-fit:contain;
+}
+.wcard-vis::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.5));pointer-events:none;z-index:1}
+.wcard-vis .slide-img{width:100%;height:100%;object-fit:cover;display:block}
+.wcard-body{padding:14px 16px;background:rgba(255,255,255,.02)}
+.wcard-body h3{font-size:13px;font-weight:600;margin-bottom:2px}
+.wcard-body p{font-size:10px;color:rgba(255,255,255,.35)}
+.wtag{display:inline-block;margin-top:6px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4)}
+
+/* S7 Partners */
+#s7{background:#040404}
+.partners-center{text-align:center;max-width:960px;margin:0 auto}
+.marquee-outer{overflow:hidden;margin:28px 0;-webkit-mask:linear-gradient(90deg,transparent,#fff 12%,#fff 88%,transparent);mask:linear-gradient(90deg,transparent,#fff 12%,#fff 88%,transparent)}
+.marquee-track{display:flex;gap:10px;width:max-content;animation:marquee 28s linear infinite}
+.marquee-track.rev{animation-direction:reverse;animation-duration:22s}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mpill{background:#0c0c0c;border:1px solid rgba(255,255,255,.07);border-radius:50px;padding:9px 18px;font-size:11px;font-weight:500;color:rgba(255,255,255,.48);white-space:nowrap;flex-shrink:0;transition:color .25s,border-color .25s,transform .25s}
+.mpill:hover{color:#fff;border-color:rgba(255,255,255,.22);transform:scale(1.03)}
+.intl-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-top:20px;margin-bottom:10px}
+.intl-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.intl-pill{padding:12px 24px;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-size:12px;font-weight:600;color:rgba(255,255,255,.55);transition:all .3s}
+.intl-pill:hover{background:rgba(255,255,255,.06);color:#fff;transform:translateY(-2px)}
+.partner-note{font-size:13px;color:rgba(255,255,255,.38);line-height:1.75;max-width:720px;margin:24px auto 0}
+
+/* S8 S9 Case studies */
+#s8,#s9{background:#050505}
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.case-visual{aspect-ratio:4/3;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:#050505;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.case-visual .slide-img{width:80%;
+  height:80%;
+
+  object-fit:contain;
+
+  object-position:center;
+
+  transform:scale(.82);}
+.case-visual-wipe{position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left;mix-blend-mode:difference;z-index:3}
+.case-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap}
+.case-meta span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;color:rgba(255,255,255,.45)}
+.case-text p{font-size:14px;line-height:1.85;color:rgba(255,255,255,.5);margin-bottom:16px}
+.case-text p em{color:#fff;font-style:normal;font-weight:500}
+
+/* S10 Print */
+#s10{background:#030303}
+.print-head{text-align:center;margin-bottom:40px}
+.print-tagline{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-.03em;margin-top:8px}
+.print-cards{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;perspective:800px}
+.print-card{width:140px;height:190px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:#080808;display:flex;align-items:flex-end;justify-content:center;position:relative;overflow:hidden;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.85);transform-style:preserve-3d;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.print-card .slide-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.print-card-label{position:relative;z-index:2;padding:12px 8px;width:100%;text-align:center;background:linear-gradient(180deg,transparent,rgba(0,0,0,.75))}
+.print-card:nth-child(odd){transform:rotateY(-8deg) rotateX(4deg)}
+.print-card:nth-child(even){transform:rotateY(8deg) rotateX(-4deg)}
+.print-card:hover{transform:rotateY(0) rotateX(0) translateY(-8px);border-color:rgba(255,255,255,.25)}
+
+/* S11 Packages */
+#s11{background:#040404}
+.pkg-table{width:100%;margin-top:28px;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden}
+.pkg-row{display:grid;grid-template-columns:120px 100px 1fr;gap:0;border-bottom:1px solid rgba(255,255,255,.05);background:#080808;transition:background .3s}
+.pkg-row:last-child{border-bottom:none}
+.pkg-row:hover{background:#0e0e0e}
+.pkg-row.head{background:rgba(255,255,255,.04);font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.pkg-row.head:hover{background:rgba(255,255,255,.04)}
+.pkg-cell{padding:14px 16px;font-size:11px;color:rgba(255,255,255,.48);line-height:1.55;display:flex;align-items:center}
+.pkg-row.head .pkg-cell{color:rgba(255,255,255,.35)}
+.pkg-cell:first-child{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+
+/* S12 Community */
+#s12{background:#050505}
+.community-wrap{text-align:center;max-width:800px;margin:0 auto}
+.orbit-wrap{position:relative;width:320px;height:320px;margin:40px auto 0}
+.orbit-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:12px;background:rgba(255,255,255,.03)}
+.orbit-ring{
+position:absolute;
+
+inset:0;
+
+border:1px dashed rgba(255,255,255,.08);
+
+border-radius:50%;
+
+/* stop spinning */
+animation:none;
+}
+.orbit-item{
+position:absolute;
+
+font-size:9px;
+
+letter-spacing:.1em;
+
+text-transform:uppercase;
+
+padding:8px 12px;
+
+border:1px solid rgba(255,255,255,.1);
+
+border-radius:100px;
+
+background:#0a0a0a;
+
+color:rgba(255,255,255,.5);
+
+white-space:nowrap;
+
+/* smooth subtle movement */
+animation:
+float 8s ease-in-out infinite;
+
+will-change:transform;
+}
+
+/* stagger motion */
+.orbit-item:nth-child(2){animation-delay:0s}
+.orbit-item:nth-child(3){animation-delay:-1s}
+.orbit-item:nth-child(4){animation-delay:-2s}
+.orbit-item:nth-child(5){animation-delay:-3s}
+.orbit-item:nth-child(6){animation-delay:-4s}
+.orbit-item:nth-child(7){animation-delay:-5s}
+
+@keyframes float{
+
+0%{
+transform:translate(0px,0px);
+}
+
+25%{
+transform:translate(4px,-6px);
+}
+
+50%{
+transform:translate(0px,-10px);
+}
+
+75%{
+transform:translate(-4px,-5px);
+}
+
+100%{
+transform:translate(0px,0px);
+}
+
+}
+.orbit-item:nth-child(2){
+top:0;
+left:50%;
+margin-left:-60px;
+}
+
+.orbit-item:nth-child(3){
+top:50%;
+right:0;
+margin-top:-16px;
+}
+
+.orbit-item:nth-child(4){
+bottom:0;
+left:50%;
+margin-left:-50px;
+}
+
+.orbit-item:nth-child(5){
+top:50%;
+left:0;
+margin-top:-16px;
+}
+.orbit-item:nth-child(6){top:15%;right:10%}
+.orbit-item:nth-child(7){bottom:15%;left:10%}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
+
+/* S13 Process */
+#s13{background:#030303}
+.p-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;position:relative}
+.p-connector{position:absolute;top:28px;left:12.5%;width:75%;height:1px;background:rgba(255,255,255,0);overflow:hidden}
+.p-connector-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.25),rgba(255,255,255,.05))}
+.p-step{text-align:center;padding:0 18px}
+.p-num{width:56px;height:56px;border-radius:50%;background:#0a0a0a;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:14px;font-weight:700;font-family:'Space Grotesk',sans-serif;transition:transform .4s,border-color .4s}
+.p-step:hover .p-num{transform:scale(1.05);border-color:rgba(255,255,255,.3)}
+.p-step h3{font-size:13px;font-weight:700;margin-bottom:8px}
+.p-step p{font-size:11px;color:rgba(255,255,255,.38);line-height:1.65}
+
+/* S14 CTA */
+#s14{background:#000}
+.cta-wrap{text-align:center;max-width:680px;margin:0 auto;position:relative}
+.cta-bg{font-family:'Space Grotesk',sans-serif;position:absolute;font-size:clamp(100px,20vw,240px);font-weight:700;letter-spacing:-.05em;color:rgba(255,255,255,.025);top:50%;left:50%;transform:translate(-50%,-52%);white-space:nowrap;pointer-events:none;z-index:0}
+.cta-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5.5vw,64px);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin-bottom:18px;position:relative;z-index:1}
+.cta-p{font-size:16px;color:rgba(255,255,255,.42);line-height:1.75;margin-bottom:36px;position:relative;z-index:1}
+.cta-btns{display:flex;gap:12px;justify-content:center;position:relative;z-index:1;flex-wrap:wrap}
+.btn-w{background:#fff;color:#000;border:none;border-radius:50px;padding:14px 32px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.03em;transition:transform .3s,box-shadow .3s;font-family:'Inter',sans-serif}
+.btn-w:hover{transform:scale(1.04);box-shadow:0 0 36px rgba(255,255,255,.15)}
+.btn-g{background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:14px 32px;font-size:13px;font-weight:600;cursor:pointer;transition:background .25s,transform .25s;font-family:'Inter',sans-serif}
+.btn-g:hover{background:rgba(255,255,255,.1);transform:scale(1.04)}
+.cta-foot{margin-top:44px;font-size:11px;color:rgba(255,255,255,.2);letter-spacing:.08em;position:relative;z-index:1}
+
+@media(max-width:960px){
+  .slide{padding:48px 24px 88px}
+  .about-grid,.case-grid{grid-template-columns:1fr;gap:32px}
+  .journey-track,.p-steps{grid-template-columns:repeat(2,1fr);gap:28px}
+  .journey-line,.p-connector{display:none}
+  .srv-grid{grid-template-columns:repeat(2,1fr)}
+  .work-grid{grid-template-columns:repeat(2,1fr)}
+  .pkg-row{grid-template-columns:1fr;gap:4px}
+  .pkg-row.head{display:none}
+  .pkg-cell{padding:10px 14px}
+  .pkg-cell:first-child{border-bottom:1px solid rgba(255,255,255,.06)}
+  #keyhint{display:none}
+  .orbit-wrap{width:260px;height:260px}
+}
+
+/* Center-align the title header layout on Slide 4 */
+#s4 .inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Let the grid container allow items to explode outwards */
+#s4 .srv-grid {
+  background: transparent;
+  gap: 20px; /* Gives them breathing room to expand without hitting each other */
+  overflow: visible; 
+  padding: 20px;
+}
+
+#s4 .srv {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  position: relative;
+  z-index: 1;
+  
+  /* Snappy cubic-bezier curve that acts like a physical spring popping out */
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              background-color 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.4s ease;
+}
+/* Underline accent framework for Slide 4 */
+.underlined-title {
+  position: relative;
+  display: inline-block;
+}
+
+.underlined-title::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px; /* Adjust distance between text and the line */
+  width: 100%;
+  height: 2px; /* Line thickness */
+  
+  /* Premium gradient that elegantly fades out toward both edges */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45) 20%, rgba(255, 255, 255, 0.45) 80%, transparent);
+  
+  /* Hooked into your existing animation state */
+  transform-origin: center;
+  will-change: transform;
+}
+#s4 .srv:hover {
+  background: #121212; /* Distinctly lighter background so it detaches from the screen */
+  border-color: rgba(255, 255, 255, 0.4); /* Solid, bright border accent */
+  
+  /* The "In Your Face" Pop: Scales up by 15% and pulls forward aggressively */
+  transform: translateY(-15px) scale(1.15); 
+  
+  /* Massive, soft blurred shadow to give it physical 3D depth over the other cards */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 
+              0 0 30px rgba(255, 255, 255, 0.05); 
+              
+  z-index: 999; /* Forces the hovered card completely over everything else on the screen */
+}
+/* Perfectly center Slide 3 layout content */
+#s3 .inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#s3 .sec-sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#s3 .journey-track {
+  width: 100%; /* Ensures the step track below stays fully expanded across the slide width */
+}
+/* Center-align the title header layout on Slide 6 (Selected Work) */
+#s6 .inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Ensure the work grid below stays fully expanded across the slide width */
+#s6.work-grid{
+  display:grid;
+  gap:22px;
+  grid-template-columns:repeat(3,1fr);
+
+  overflow:visible;
+  padding-top:40px;
+  padding-bottom:40px;
+}
+#s6 .wcard{
+  position:relative;
+  z-index:1;
+
+  transition:
+    transform .55s cubic-bezier(.22,1,.36,1),
+    box-shadow .55s ease,
+    border-color .35s ease;
+
+  transform-origin:center center;
+}
+
+#s6 .wcard{
+  position:relative;
+  z-index:1;
+
+  transition:
+    transform .6s cubic-bezier(.22,1,.36,1),
+    box-shadow .6s ease,
+    border-color .35s ease;
+
+  will-change:transform;
+}
+#s6 .wcard:hover{
+
+/* lift upward + enlarge */
+transform:
+  translate3d(0,-36px,0)
+  scale(1.10);
+
+border-color:
+  rgba(255,255,255,.35);
+
+box-shadow:
+  0 55px 120px rgba(0,0,0,.9),
+  0 0 60px rgba(255,255,255,.08);
+
+z-index:999;
+}
+
+#s6 .wcard-vis{
+  transition:transform .55s ease;
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="bg"></canvas>
+<div id="curtain"></div>
+<div id="slabel">WHY Studio</div>
+<div id="keyhint"><kbd>↑</kbd><kbd>↓</kbd> scroll &nbsp; <kbd>←</kbd><kbd>→</kbd> navigate</div>
+
+<div id="deck">
+
+<!--
+  ═══════════════════════════════════════════════════════════════
+  IMAGE PLACEHOLDERS — replace per slide/card when assets are ready
+  All cards below use: images/placeholder-why.png
+  Upload the images/ folder alongside this HTML file on your website.
+  ═══════════════════════════════════════════════════════════════
+-->
+
+<!-- 1 HERO -->
+<section class="slide active" id="s1" data-label="WHY Studio">
+  <div class="hero-wrap">
+    <div class="hero-badge anim-item">Benghazi · Libya</div>
+    <div class="hero-eyebrow anim-item">Creative Agency</div>
+    
+    <div class="hero-title">
+      <div class="hero-logo-container anim-item">
+        <img src="images/WHY.svg" alt="WHY Studio Logo" class="hero-logo-img">
+        <span class="q-ring"></span>
+        <span class="q-ring"></span>
+      </div>
+    </div>
+    
+    <div class="hero-line"></div>
+    <div class="hero-sub anim-item">START WITH WHY.</div>
+    <div class="scroll-hint anim-item"><span>Scroll or use arrows</span><div class="scroll-line"></div></div>
+  </div>
+</section>
+
+<!-- 2 ABOUT -->
+<section class="slide" id="s2" data-label="About">
+  <div class="inner about-grid">
+    <div>
+      <div class="divider anim-item"></div>
+      <div class="about-quote anim-item">WHY does this brand exist?<br><em>What's our story?</em></div>
+    </div>
+    <div class="about-text">
+      <p class="anim-item">A creative agency that builds <em>authentic brands</em> through clarity and intelligence. We partner with companies and institutions to turn ideas into <em>strong identities</em>, impactful content, and campaigns that deliver messages with simplicity and purpose.</p>
+      <p class="anim-item">From strategy to design to execution, every step has a <em>real purpose</em> and <em>tangible impact</em>. We work with long-term thinking and practical creativity — to make work that lives, grows, and leaves a mark.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 JOURNEY -->
+<section class="slide" id="s3" data-label="The Journey">
+  <div class="inner">
+    <div class="eyebrow anim-item">How we work</div>
+    <div class="sec-title anim-item">Not separate services <br>one integrated journey.</div>
+    <p class="sec-sub anim-item">From the first idea through brand building, execution, expansion, and growth every service has a clear role in telling your brand story.</p>
+    <div class="journey-track">
+      <div class="journey-line"><div class="journey-line-fill"></div></div>
+      <div class="j-node anim-item"><div class="j-dot">01</div><h3>Define</h3><p>Purpose, audience, and core messages clarified.</p></div>
+      <div class="j-node anim-item"><div class="j-dot">02</div><h3>Build</h3><p>Identity, content, and visual systems crafted.</p></div>
+      <div class="j-node anim-item"><div class="j-dot">03</div><h3>Launch</h3><p>Campaigns and presence across digital and physical.</p></div>
+      <div class="j-node anim-item"><div class="j-dot">04</div><h3>Grow</h3><p>Sustained content, events, and long-term impact.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 SERVICES -->
+<section class="slide" id="s4" data-label="Services">
+  <div class="inner">
+    <div class="eyebrow anim-item">What We Do?</div>
+    <div class="sec-title anim-item">Nine Disciplines.<br><span class="underlined-title">One story.</span></div>
+    <div class="srv-grid">
+      <div class="srv anim-item"><div class="srv-ico">◈</div><h3>Strategic Brand Planning</h3><p>Understanding before execution — purpose, audience, core messages.</p><div class="srv-num">01</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◉</div><h3>Brand Building</h3><p>Essence, personality, direction — a brand that lives and grows.</p><div class="srv-num">02</div></div>
+      <div class="srv anim-item"><div class="srv-ico">▣</div><h3>Visual Identity</h3><p>Logo to full system — consistent across every platform.</p><div class="srv-num">03</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◐</div><h3>Social Media & Campaigns</h3><p>Plan, produce, manage content as one unified system.</p><div class="srv-num">04</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◎</div><h3>Photography & Video</h3><p>Visual production that serves the story and reflects identity.</p><div class="srv-num">05</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◌</div><h3>Animation & Illustration</h3><p>Motion and drawing that simplify ideas and boost engagement.</p><div class="srv-num">06</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◆</div><h3>AI & Creative Tech</h3><p>Accelerating creativity without losing the human touch.</p><div class="srv-num">07</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◩</div><h3>Print & Advertising</h3><p>Tangible brand presence offline as well as online.</p><div class="srv-num">08</div></div>
+      <div class="srv anim-item"><div class="srv-ico">◷</div><h3>Events & Coverage</h3><p>Full event solutions from identity to documentation.</p><div class="srv-num">09</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 PROOF -->
+<section class="slide" id="s5" data-label="Proof">
+  <div class="inner proof-wrap">
+    <div class="eyebrow anim-item">But what proves this?</div>
+    <div class="counter-block anim-item">
+      <div class="counter-num" data-target="100">0</div>
+      <div class="counter-label">Clients over four years</div>
+    </div>
+    <p class="proof-tagline anim-item">Real partnerships. Real impact. Real stories told with clarity and purpose.</p>
+  </div>
+</section>
+
+<!-- 6 WORK -->
+<section class="slide" id="s6" data-label="Selected Work">
+  <div class="inner">
+    <div class="eyebrow anim-item">Selected work</div>
+    <div class="sec-title anim-item">Stories we've told.</div>
+    <div class="work-grid">
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Wahda.svg" alt="Wahda Bank"></div><div class="wcard-body"><h3>Wahda Bank</h3><p>Social, campaigns, events</p><span class="wtag">Brand + Content</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Arcadia.svg" alt="Arcadia Engineering"></div><div class="wcard-body"><h3>Arcadia Engineering</h3><p>Visual identity & photography</p><span class="wtag">Identity</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Safwa.svg" alt="Safwa Resort"></div><div class="wcard-body"><h3>Safwa Resort</h3><p>Brand identity & content</p><span class="wtag">Brand + Content</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/218Cafe.svg" alt="218 Cafe"></div><div class="wcard-body"><h3>218 Cafe</h3><p>Full brand & social</p><span class="wtag">Branding</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Tech.svg" alt="Libya Tech Foundation"></div><div class="wcard-body"><h3>Libya Tech Foundation</h3><p>National Technology Day</p><span class="wtag">Event + Campaign</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Leo.svg" alt="LEO Engineering"></div><div class="wcard-body"><h3>LEO Engineering</h3><p>Photography & content</p><span class="wtag">Photography</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Masar.svg" alt="MASAR Engineering"></div><div class="wcard-body"><h3>MASAR Engineering</h3><p>Visual identity</p><span class="wtag">Identity</span></div></div>
+      <div class="wcard anim-item"><div class="wcard-vis"><img class="slide-img" src="images/Miraj.svg" alt="Mirage Fashion"></div><div class="wcard-body"><h3>Mirage Fashion</h3><p>Visual identity</p><span class="wtag">Fashion</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 PARTNERS -->
+<section class="slide" id="s7" data-label="Partners">
+  <div class="inner partners-center">
+    <div class="eyebrow anim-item">Partners & clients</div>
+    <div class="sec-title anim-item">Trusted by 100+ brands<br>& organizations.</div>
+    <div class="marquee-outer anim-item">
+      <div class="marquee-track">
+        <div class="mpill">Libya Tech Foundation</div><div class="mpill">Wahda Bank</div><div class="mpill">Arcadia</div><div class="mpill">Safwa Resort</div><div class="mpill">218 Cafe</div><div class="mpill">LEO Engineering</div><div class="mpill">Global Shapers</div><div class="mpill">Adidas Libya</div><div class="mpill">ENJAZ</div><div class="mpill">Future IT</div><div class="mpill">Net Cube</div><div class="mpill">East of West</div>
+        <div class="mpill">Libya Tech Foundation</div><div class="mpill">Wahda Bank</div><div class="mpill">Arcadia</div><div class="mpill">Safwa Resort</div><div class="mpill">218 Cafe</div><div class="mpill">LEO Engineering</div><div class="mpill">Global Shapers</div><div class="mpill">Adidas Libya</div><div class="mpill">ENJAZ</div><div class="mpill">Future IT</div><div class="mpill">Net Cube</div><div class="mpill">East of West</div>
+      </div>
+    </div>
+    <div class="marquee-outer anim-item">
+      <div class="marquee-track rev">
+        <div class="mpill">MASAR Engineering</div><div class="mpill">Mirage Fashion</div><div class="mpill">Ebreaze Hotel</div><div class="mpill">Golden Palm Resort</div><div class="mpill">Barah Arts & Culture</div><div class="mpill">Election Campaign</div><div class="mpill">Intl. Organizations</div><div class="mpill">Sonaa Al-Amal</div><div class="mpill">Perpetual Peace</div><div class="mpill">Creative Design</div>
+        <div class="mpill">MASAR Engineering</div><div class="mpill">Mirage Fashion</div><div class="mpill">Ebreaze Hotel</div><div class="mpill">Golden Palm Resort</div><div class="mpill">Barah Arts & Culture</div><div class="mpill">Election Campaign</div><div class="mpill">Intl. Organizations</div><div class="mpill">Sonaa Al-Amal</div><div class="mpill">Perpetual Peace</div><div class="mpill">Creative Design</div>
+      </div>
+    </div>
+    <p class="intl-label anim-item">International Partners</p>
+    <div class="intl-row anim-item">
+      <div class="intl-pill"> ACTED</div>
+      <div class="intl-pill">ICRC — Red Cross Libya</div>
+    </div>
+    <p class="partner-note anim-item">Every project is proof of our commitment combining our creative expertise with each partner's unique vision to craft narratives that resonate and inspire.</p>
+  </div>
+</section>
+
+<!-- 8 CASE MASAR -->
+<section class="slide" id="s8" data-label="Case — MASAR">
+  <div class="inner case-grid">
+    <div class="case-visual anim-item">
+      <div class="case-visual-wipe"></div>
+      <img class="slide-img" src="images/Masar.svg" alt="MASAR Engineering case study">
+    </div>
+    <div class="case-text">
+      <div class="eyebrow anim-item">Visual Identity</div>
+      <div class="sec-title anim-item" style="font-size:clamp(24px,3.5vw,40px)">MASAR Engineering Consultancy</div>
+      <p class="anim-item">WHY Studio developed a visual identity that expresses MASAR's true essence and way of working — not a cosmetic change, but a <em>clear brand</em> reflecting precision, organization, and systematic thinking.</p>
+      <p class="anim-item">A visual presence that helps the company be <em>clearer in the market</em>, easier to recognize, and reflect professionalism without exaggeration or complexity.</p>
+      <div class="case-meta anim-item">
+        <span>Engineering</span><span>Visual Identity</span><span>Brand Strategy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 CASE MIRAGE -->
+<section class="slide" id="s9" data-label="Case — Mirage">
+  <div class="inner case-grid">
+    <div class="case-text">
+      <div class="eyebrow anim-item">Visual Identity</div>
+      <div class="sec-title anim-item" style="font-size:clamp(24px,3.5vw,40px)">Mirage Fashion</div>
+      <p class="anim-item">A Libyan fashion brand based in the UAE. The goal: an elegant, authentic presence that honors <em>Arab heritage</em> with a contemporary spirit — speaking to today's woman with clear, confident taste.</p>
+      <p class="anim-item">Mirage is not just a fashion label — it's a <em>story of taste and identity</em>. The design had to tell that story without extra explanation.</p>
+      <div class="case-meta anim-item">
+        <span>2023</span><span>Fashion</span><span>Visual Identity</span>
+      </div>
+    </div>
+    <div class="case-visual anim-item">
+      <div class="case-visual-wipe"></div>
+      <img class="slide-img" src="images/Miraj.svg" alt="Mirage Fashion case study">
+    </div>
+  </div>
+</section>
+
+<!-- 10 PRINT -->
+<section class="slide" id="s10" data-label="Print">
+  <div class="inner">
+    <div class="print-head">
+      <div class="eyebrow anim-item">Our print work</div>
+      <div class="print-tagline anim-item">You Dream It,<br>We Make It.</div>
+    </div>
+    <div class="print-cards">
+      <div class="print-card anim-item"><img class="slide-img" src="images/01.jpeg" alt=""><span class="print-card-label">Business Cards</span></div>
+      <div class="print-card anim-item"><img class="slide-img" src="images/02.jpeg" alt=""><span class="print-card-label">Brochures</span></div>
+      <div class="print-card anim-item"><img class="slide-img" src="images/03.jpeg" alt=""><span class="print-card-label">Signage</span></div>
+      <div class="print-card anim-item"><img class="slide-img" src="images/04.jpeg" alt=""><span class="print-card-label">Packaging</span></div>
+      <div class="print-card anim-item"><img class="slide-img" src="images/06.jpeg" alt=""><span class="print-card-label">Outdoor Ads</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 12 COMMUNITY -->
+<section class="slide" id="s12" data-label="Community">
+  <div class="inner community-wrap">
+    <div class="eyebrow anim-item">Beyond client work</div>
+    <div class="sec-title anim-item">Building Libya's<br>creative ecosystem.</div>
+    <p class="sec-sub anim-item" style="margin:14px auto 0;text-align:center">We believe in a creative community that supports designers, artists, and content creators across Libya.</p>
+    <div class="orbit-wrap anim-item">
+      <div class="orbit-ring"></div>
+      <div class="orbit-center">Libya<br>Creative<br>Community</div>
+      <div class="orbit-item">Designers</div>
+      <div class="orbit-item">Artists</div>
+      <div class="orbit-item">Creators</div>
+      <div class="orbit-item">Filmmakers</div>
+      <div class="orbit-item">Strategists</div>
+      <div class="orbit-item">Photographers</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 PROCESS -->
+<section class="slide" id="s13" data-label="Process">
+  <div class="inner">
+    <div class="eyebrow anim-item">Our process</div>
+    <div class="sec-title anim-item">From first question<br>to lasting mark.</div>
+    <div class="p-steps">
+      <div class="p-connector"><div class="p-connector-fill"></div></div>
+      <div class="p-step anim-item"><div class="p-num">01</div><h3>Discover the Why</h3><p>Why does this brand exist? What's its story? What does it want to say?</p></div>
+      <div class="p-step anim-item"><div class="p-num">02</div><h3>Strategy</h3><p>Clarify purpose, audience, and messages — then build a strategy that guides everything.</p></div>
+      <div class="p-step anim-item"><div class="p-num">03</div><h3>Build the Identity</h3><p>Logo to visual system to content — a brand that communicates with confidence.</p></div>
+      <div class="p-step anim-item"><div class="p-num">04</div><h3>Grow & Sustain</h3><p>Long-term mindset. Campaigns, content, events — all with purpose and real impact.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 CTA -->
+<section class="slide" id="s14" data-label="Let's Talk">
+  <div class="cta-bg">WHY?</div>
+  <div class="cta-wrap">
+    <div class="cta-title anim-item">Ready to start With</div>
+    <img
+  class="cta-image anim-item"
+  src="images/WHY.svg"
+  alt=""
+>
+    <div class="cta-p anim-item">Let's build something that lives, grows,<br>and leaves a mark — together.</div>
+    <div class="cta-btns anim-item">
+      <button class="btn-w" type="button">Start a Project</button>
+      <button class="btn-g" type="button">View Portfolio</button>
+    </div>
+    <div class="cta-foot anim-item">WHY Studio · Benghazi, Libya · A creative agency built on purpose.</div>
+  </div>
+</section>
+
+</div>
+
+<div id="dots"></div>
+<div id="nav">
+  <button id="pb" disabled aria-label="Previous slide">&#8592;</button>
+  <span id="slide-counter">1 / 13</span>
+  <button id="nb" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+/* Particle background */
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mouse = { x: -999, y: -999 };
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.size = Math.random() * 1.1 + .3;
+    this.speedX = (Math.random() - .5) * .22;
+    this.speedY = (Math.random() - .5) * .22;
+    this.opacity = Math.random() * .3 + .05;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.pulse += .014;
+    const dx = this.x - mouse.x, dy = this.y - mouse.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 130) {
+      const force = (130 - dist) / 130;
+      this.x += (dx / dist) * force * .5;
+      this.y += (dy / dist) * force * .5;
+    }
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.globalAlpha = this.opacity * (0.7 + Math.sin(this.pulse) * .3);
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawLines() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 85) {
+        ctx.globalAlpha = (85 - dist) / 85 * .03;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = .4;
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+for (let i = 0; i < 90; i++) particles.push(new Particle());
+(function animate() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawLines();
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(animate);
+})();
+
+document.querySelectorAll('.srv').forEach(el => {
+  el.addEventListener('mousemove', e => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+
+/* Slide engine */
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('slide-counter');
+const pb = document.getElementById('pb');
+const nb = document.getElementById('nb');
+const slabel = document.getElementById('slabel');
+const curtain = document.getElementById('curtain');
+const curtainLine = document.getElementById('curtain-line');
+const progress = document.getElementById('progress');
+
+let cur = 0;
+let animating = false;
+const total = slides.length;
+const EASE_OUT = 'power3.out';
+const EASE_IN = 'power2.in';
+const EASE_IO = 'power2.inOut';
+
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+});
+
+gsap.set(slides[0], { opacity: 1, visibility: 'visible' });
+
+function resetSlideItems(slide) {
+  const items = slide.querySelectorAll('.anim-item');
+  gsap.set(items, { opacity: 0, y: 28, scale: 0.97, filter: 'blur(6px)', rotationX: 0 });
+  const letters = slide.querySelectorAll('.hero-title .letter');
+  if (letters.length) {
+    gsap.set(letters, { opacity: 0, y: 80, rotateX: -70, transformOrigin: '50% 100%' });
+  }
+  const line = slide.querySelector('.hero-line');
+  if (line) gsap.set(line, { scaleX: 0, opacity: 0, transformOrigin: 'center' });
+  const divider = slide.querySelector('.divider');
+  if (divider) gsap.set(divider, { scaleX: 0, opacity: 0, transformOrigin: 'left' });
+  slide.querySelectorAll('.journey-line-fill, .p-connector-fill').forEach(el => {
+    gsap.set(el, { width: '0%' });
+  });
+  slide.querySelectorAll('.case-visual-wipe').forEach(el => {
+    gsap.set(el, { scaleX: 0 });
+  });
+  slide.querySelectorAll('.print-card').forEach((el, i) => {
+    gsap.set(el, { opacity: 0, y: 60, rotateY: i % 2 ? 20 : -20, rotateX: 10 });
+  });
+  const cn = slide.querySelector('.counter-num');
+  if (cn) cn.textContent = '0';
+}
+
+function animateCounter(slide, tl, pos) {
+  const el = slide.querySelector('.counter-num');
+  if (!el) return;
+  const obj = { val: 0 };
+  tl.to(obj, {
+    val: parseInt(el.dataset.target, 10),
+    duration: 1.6,
+    ease: 'power2.out',
+    onUpdate: () => { el.textContent = Math.round(obj.val) + '+'; }
+  }, pos);
+}
+
+function animateSlideIn(slide) {
+  const items = slide.querySelectorAll('.anim-item');
+  const letters = slide.querySelectorAll('.hero-title .letter');
+  const line = slide.querySelector('.hero-line');
+  const divider = slide.querySelector('.divider');
+  const journeyFill = slide.querySelector('.journey-line-fill');
+  const connectorFill = slide.querySelector('.p-connector-fill');
+  const wipes = slide.querySelectorAll('.case-visual-wipe');
+  const printCards = slide.querySelectorAll('.print-card');
+
+  const tl = gsap.timeline();
+
+  if (letters.length) {
+    tl.to(letters, { opacity: 1, y: 0, rotateX: 0, duration: 0.85, stagger: 0.08, ease: 'back.out(1.4)' }, 0);
+    if (line) tl.to(line, { scaleX: 1, opacity: 1, duration: 1, ease: EASE_OUT }, 0.35);
+    tl.to(slide.querySelectorAll('.hero-eyebrow, .hero-sub, .scroll-hint, .hero-badge'), {
+      opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.7, stagger: 0.1, ease: EASE_OUT
+    }, 0.2);
+    return tl;
+  }
+
+  tl.to(items, {
+    opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+    duration: 0.72, stagger: 0.05, ease: EASE_OUT
+  }, 0);
+
+  if (divider) tl.to(divider, { scaleX: 1, opacity: 1, duration: 0.6, ease: EASE_OUT }, 0.08);
+  if (journeyFill) tl.to(journeyFill, { width: '100%', duration: 1.3, ease: EASE_IO }, 0.25);
+  if (connectorFill) tl.to(connectorFill, { width: '100%', duration: 1.3, ease: EASE_IO }, 0.25);
+  if (wipes.length) {
+    tl.to(wipes, { scaleX: 1, duration: 0.9, stagger: 0.15, ease: EASE_IO, transformOrigin: 'left' }, 0.2);
+    tl.to(wipes, { scaleX: 0, duration: 0.7, stagger: 0.1, ease: EASE_IN, transformOrigin: 'right', delay: 0.3 }, 0.9);
+  }
+  if (printCards.length) {
+    tl.to(printCards, {
+      opacity: 1, y: 0, rotateY: 0, rotateX: 0,
+      duration: 0.8, stagger: 0.08, ease: 'back.out(1.2)'
+    }, 0.15);
+  }
+  animateCounter(slide, tl, 0.3);
+
+  return tl;
+}
+/* Continuous subtle breathing effect for the hero logo */
+gsap.to('.hero-logo-img', {
+  scale: 1.05,             // Maximum zoom (only 5% larger)
+  duration: 4,             // 4 seconds to zoom in...
+  ease: 'sine.inOut',      // Ultra smooth, natural pacing
+  yoyo: true,              // Reverses the animation automatically (zooms back out)
+  repeat: -1               // Loops infinitely
+});
+
+function go(n) {
+  if (n === cur || animating || n < 0 || n >= total) return;
+  animating = true;
+
+  const dir = n > cur ? 1 : -1;
+  const outSlide = slides[cur];
+  const inSlide = slides[n];
+  const outItems = outSlide.querySelectorAll('.anim-item, .hero-title .letter');
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      cur = n;
+      update();
+      animating = false;
+    }
+  });
+
+  tl.to(outItems, {
+    opacity: 0, y: dir * -20, scale: 0.96, filter: 'blur(8px)',
+    duration: 0.32, stagger: 0.02, ease: EASE_IN
+  }, 0);
+
+  tl.to(outSlide,{
+  x:dir*-40,
+  opacity:0,
+  filter:'blur(6px)',
+  duration:.7,
+  ease:'power2.inOut'
+},0.04);
+
+  tl.to(curtain, { scaleY: 1, transformOrigin: 'top', duration: 0.32, ease: EASE_IO }, 0.12);
+
+  tl.fromTo(curtainLine, { top: '0%', opacity: 1, scaleX: 0 }, {
+    top: '100%', opacity: 1, scaleX: 1, duration: 0.42, ease: EASE_IO
+  }, 0.18);
+
+  tl.add(() => {
+    outSlide.classList.remove('active');
+    gsap.set(outSlide, { x: 0, opacity: 0, filter: 'blur(0px)', visibility: 'hidden' });
+    resetSlideItems(outSlide);
+
+    inSlide.classList.add('active');
+    gsap.set(inSlide, { x: dir * 100, opacity: 0, filter: 'blur(10px)', visibility: 'visible' });
+    resetSlideItems(inSlide);
+  }, 0.42);
+
+  tl.to(curtain, { scaleY: 0, transformOrigin: 'bottom', duration: 0.38, ease: EASE_IO }, 0.48);
+  tl.to(curtainLine, { opacity: 0, duration: 0.18 }, 0.52);
+  tl.to(inSlide, { x: 0, opacity: 1, filter: 'blur(0px)', duration: 0.65, ease: EASE_OUT }, 0.5);
+  tl.add(animateSlideIn(inSlide), 0.55);
+}
+
+function update() {
+  dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  counter.textContent = `${cur + 1} / ${total}`;
+  pb.disabled = cur === 0;
+  nb.disabled = cur === total - 1;
+  slabel.textContent = slides[cur].dataset.label || 'WHY Studio';
+  gsap.to(progress, { width: ((cur + 1) / total * 100) + '%', duration: 0.55, ease: EASE_OUT });
+}
+
+function goNext() { if (cur < total - 1) go(cur + 1); }
+function goPrev() { if (cur > 0) go(cur - 1); }
+
+pb.addEventListener('click', goPrev);
+nb.addEventListener('click', goNext);
+
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) {
+    e.preventDefault();
+    goNext();
+  }
+  if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+    e.preventDefault();
+    goPrev();
+  }
+  if (e.key === 'Home') { e.preventDefault(); go(0); }
+  if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+});
+
+let wheelLocked = false;
+window.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (animating || wheelLocked) return;
+  if (Math.abs(e.deltaY) < 20) return;
+  wheelLocked = true;
+  setTimeout(() => { wheelLocked = false; }, 700);
+  if (e.deltaY > 0) goNext();
+  else goPrev();
+}, { passive: false });
+
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) {
+    if (dx < 0) goNext();
+    else goPrev();
+  }
+}, { passive: true });
+
+resetSlideItems(slides[0]);
+animateSlideIn(slides[0]);
+update();
+</script>
+</body>
+</html>
